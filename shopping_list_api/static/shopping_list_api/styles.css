@@ -278,10 +278,12 @@ td {
 
     nav {
         padding: 0;
+        flex-direction: column;
     }
 
     nav > div {
-        flex-direction: column;
+        display: block;
+        width: 100%;
     }
 
     main {
