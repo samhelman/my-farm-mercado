@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Generate List</title>
+{% endblock title %}
+
+{% block content %}
+    <h1>Grocery List</h1>
+
+    {% if list_items %}
+    <table CELLSPACING=0>
+        <tr>
+            <th class="table-80">Item</th>
+            <th class="table-20">Quantity</th>
+        </tr>
+        {% for item_name, value in list_items.items %}
+            <tr>
+                <td class="table-80">{{ item_name.capitalize }}</td>
+                <td class="table-20">{{ value }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+            <p>There are no active lists at this time.</p>
+    {% endif %}
+{% endblock content %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Login</title>
+{% endblock title %}
+
+{% block content %}
+    <h1>Login</h1>
+
+    <p>It looks like this is your first time loggin in. Would you like to reset your password?</p>
+
+    <div>
+        <a href="{% url 'login' %}" class="button">No Thanks!</a>
+        <a href="{% url 'password_reset' %}" class="button primary-button">Yes Please!</a>
+    </div>
+    
+
+
+{% endblock content %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>List Detail</title>
+{% endblock title %}
+
+{% block content %}
+    <div class="inline">
+        <a href="{% url 'dashboard-view-lists' %}"><i class="material-icons">chevron_left</i></a>
+        <h1>List Detail</h1>
+    </div>
+
+    {% if data %}
+        {% if form %}
+            <form action="{% url 'dashboard-list-detail' list_id=data.list_id %}" method="POST">
+                {% csrf_token %}
+                {{ form }}
+                <input type="submit" value="Save" class="button">
+                {% if error %}
+                    <p>{{ error }}</p>
+                {% endif %}
+            </form>
+        {% endif %}
+        <table CELLSPACING=0>
+            <tr>
+                <th colspan=2>{{ data.list_name }}</th>
+            </tr>
+            {% if data.list_price %}
+                <tr>
+                    <td>Price:</td>
+                    <td>${{ data.list_price }}</td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td>Status:</td>
+                <td>{{ data.list_status.upper }}</td>
+            </tr>
+            {% if data.list_notes %}
+                <tr>
+                    <td>Notes:</td>
+                    <td>{{ data.list_notes }}</td>
+                </tr>
+            {% endif %}
+        </table>
+
+        <table CELLSPACING=0>
+            <tr>
+                <th colspan=2>Items</th>
+            </tr>
+            {% for item in data.list_items %}
+                <tr>
+                    <td colspan=2>{{ item.capitalize }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock content %}

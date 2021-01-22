@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if user_type == 'user' %}
+        <title>My Lists</title>
+    {% else %}
+        <title>Grocery Lists</title>
+    {% endif %}
+{% endblock title %}
+
+{% block content %}
+    <h1>Grocery Lists</h1>
+    <table CELLSPACING=0>
+        <tr>
+            <th class="table-80">List Name</th>
+            <th class="table-20">Status</th>
+        </tr>
+    </table>
+    {% for name, lists in data.items %}
+        {% if lists|length > 0 %}
+            <table CELLSPACING=0>    
+                
+                <tr>
+                    <th colspan="2">{{ name }}</th>
+                </tr>
+                {% for list in lists%}
+                <tr>
+                    <td class="table-80"><a href="{% url 'dashboard-list-detail' list_id=list.list_id %}">{{ list.list_name }}</a></td>
+                    <td class="table-20">{{ list.list_status }}</td>
+                </tr>
+                {% endfor %}
+               
+            </table>
+        {% endif %}
+    {% endfor %}
+        
+
+{% endblock content %}

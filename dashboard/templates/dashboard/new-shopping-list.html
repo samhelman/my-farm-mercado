@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>New List</title>
+{% endblock title %}
+
+{% block content %}
+    <h1>New List</h1>
+
+    {% if form %}
+        <form action="{% url 'dashboard-new-shopping-list' %}" method="POST">
+            {% csrf_token %}
+            {% for group, choices in form.fields.items %}
+            <label>{{ group.upper }}:</label>
+            <ul id="id_{{group}}">
+                {% for choice in choices.choices %}
+                <li>
+                    <input id="id_{{group}}_{{forloop.counter0}}" type="checkbox" name="{{group}}" value="{{choice.0}}">
+                    <label for="id_{{group}}_{{forloop.counter0}}">{{choice.1}}</label>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endfor %}
+            <input type="submit" value="Submit" class="button">
+            {% if error %}
+                <p class="errors">{{ error }}</p>
+            {% endif %}
+        </form>
+    {% endif %}
+
+
+{% endblock content %}

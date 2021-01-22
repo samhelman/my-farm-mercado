@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Dashboard</title>
+{% endblock title %}
+
+{% block content %}
+    <h1>DASHBOARD HOME</h1>
+    <p>
+        Welcome to WTF Mercado!
+    </p>
+    {% if user_type == 'admin' %}
+        <p>
+            Use the dashboard to register new users, 
+            view your organisation's user lists, generate your shopping list, 
+            customise your organisation's list items, track payments and more!
+        </p>
+    {% else %}
+        <p>
+            Use the dashboard to add new lists, track payments and more!
+        </p>
+    {% endif %}
+{% endblock content %}

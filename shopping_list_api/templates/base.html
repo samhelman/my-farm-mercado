@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'shopping_list_api/styles.css' %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block title %}{% endblock title %}
+</head>
+    <body>
+        <nav class="main-nav nav-shadow">
+            <div>
+                <a class="{% if main_selected == 'index' %} selected {% endif %}" href="{% url 'home-index' %}">MyFarmMercado</a>
+            </div>
+            <div>
+                {% if user.is_authenticated %}
+                    <a class="{% if main_selected == 'dashboard' %} selected {% endif %}" href="{% url 'dashboard-index' %}">Dashboard</a>
+                    <a href="{% url 'home-logout' %}">Logout</a>
+                {% else %}
+                    <a class="{% if main_selected == 'register_organisation' %} selected {% endif %}" href="{% url 'dashboard-register-organisation' %}">Register Your Organisation</a>
+                    <a class="{% if main_selected == 'login' %} selected {% endif %}" href="{% url 'login' %}">Login</a>
+                {% endif %}
+                {% if user_type == 'admin' %}
+                
+                {% endif %}
+            </div>
+        </nav>
+        {% if user.is_authenticated %}
+            <nav class="secondary-nav nav-shadow">
+                <div>
+                    {% if user_type == 'admin' %}
+                        <a class="{% if minor_selected == 'register_user' %} selected {% endif %}" href="{% url 'dashboard-register-user' %}">Register User</a>
+                        <a class="{% if minor_selected == 'view_users' %} selected {% endif %}" href="{% url 'dashboard-get-users' %}">View Users</a>
+                        <a class="{% if minor_selected == 'view_lists' %} selected {% endif %}" href="{% url 'dashboard-view-lists' %}">View Lists</a>
+                        <a class="{% if minor_selected == 'generate_list' %} selected {% endif %}" href="{% url 'dashboard-generate-list' %}">Generate List</a>
+                        <a class="{% if minor_selected == 'custom_items' %} selected {% endif %}" href="{% url 'dashboard-manage-custom-items' %}">Manage Custom Items</a>
+                    {% elif user_type == 'user' %}
+                        <a class="{% if minor_selected == 'profile' %} selected {% endif %}" href="{% url 'dashboard-user-detail' user_id=user.id %}">Profile</a>
+                        <a class="{% if minor_selected == 'new_list' %} selected {% endif %}" href="{% url 'dashboard-new-shopping-list' %}">New List</a>
+                        <a class="{% if minor_selected == 'view_lists' %} selected {% endif %}" href="{% url 'dashboard-view-lists' %}">My Lists</a>
+                        <a class="{% if minor_selected == 'custom_items' %} selected {% endif %}" href="{% url 'dashboard-manage-custom-items' %}">Manage Custom Items</a>
+                    {% endif %}
+                </div>
+            </nav>
+        {% endif %}
+        <main>
+            {% block content %}
+            {% endblock content %}
+        </main>
+        
+        {% if user.is_authenticated %}
+        <div class="username">
+            <p>Logged in as: {{ user.username }}</p>
+        </div>
+        {% endif %}
+
+        <footer>
+
+        </footer>
+    </body>
+</html>

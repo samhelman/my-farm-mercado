@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>User Profile</title>
+{% endblock title %}
+
+{% block content %}
+    {% if user_type == 'admin' %}
+        <div class="inline">
+            <a href="{% url 'dashboard-get-users' %}"><i class="material-icons">chevron_left</i></a>
+            <h1>User Profile</h1>
+        </div>
+    {% else %}
+        <h1>User Profile</h1>
+    {% endif %}
+
+    <table CELLSPACING=0>
+        <tr>
+            <th colspan=2>User Info</th>
+        </tr>
+        <tr>
+            <td>Username:</td>
+            <td>{{ profile.user_info.username }}</td>
+        </tr>
+        <tr>
+            <td>Email:</td>
+            <td>{{ profile.user_info.email }}</td>
+        </tr>
+        <tr>
+            <td>Balance:</td>
+            <td>${{ profile.user_info.balance }}</td>
+        </tr>
+    </table>
+
+    {% if form %}
+    <div>
+        <form action="{% url 'dashboard-user-detail' user_id=profile.user_info.user_id %}" method="POST">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Submit" class="button">
+            {% if error %}
+                <p>{{ error }}</p>
+            {% endif %}
+        </form>
+    </div>
+    {% endif %}
+
+    {% if profile.list_data %}
+        <div>
+            <table CELLSPACING=0>    
+                
+                <tr>
+                    <th colspan="2">List Data</th>
+                </tr>
+                {% for list in profile.list_data %}
+                <tr>
+                    <td class="table-80"><a href="{% url 'dashboard-list-detail' list_id=list.list_id %}">{{ list.list_name }}</a></td>
+                    <td class="table-20">{{ list.status.upper }}</td>
+                </tr>
+                {% endfor %}
+                
+            </table>
+        </div>
+    {% endif %}
+
+    {% if profile.transaction_history %}
+        <div>
+            <table CELLSPACING=0>    
+                
+                <tr>
+                    <th colspan="3">Transaction History</th>
+                </tr>
+                <tr>
+                    <th>Amount</th>
+                    <th>Detail</th>
+                    <th>Date/Time</th>
+                </tr>
+                {% for transaction in profile.transaction_history %}
+                <tr>
+                    <td>${{ transaction.amount }}</td>
+                    <td>{{ transaction.detail }}</td>
+                    <td>{{ transaction.datetime }}</td>
+                </tr>
+                {% endfor %}
+                
+            </table>
+        </div>
+    {% endif %}
+
+{% endblock content %}

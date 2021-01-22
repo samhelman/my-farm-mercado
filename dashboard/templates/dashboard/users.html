@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Users</title>
+{% endblock title %}
+
+{% block content %}
+    <h1>Users</h1>
+
+    <table CELLSPACING=0>
+        <tr>
+            <th class="table-80">Username</th>
+            <th class="table-20">Admin Status</th>
+        </tr>
+        {% for user in users %}
+            <tr>
+                {% if user.user_type == 'admin' %}
+                    <td class="table-80">{{ user.auth_info.username }}</td>
+                {% else %}
+                    <td class="table-80"><a href="{% url 'dashboard-user-detail' user_id=user.auth_info.user_id %}">{{ user.auth_info.username }}</a></td>
+                {% endif %}
+                <td class="table-20">
+                    {% if user.user_type == 'admin' %}
+                        <i class="material-icons green">check_circle</i>
+                    {% else %}
+                        <i class="material-icons red">cancel</i>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>  
+
+{% endblock content %}

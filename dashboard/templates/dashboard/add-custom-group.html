@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Add Custom Group</title>
+{% endblock title %}
+
+{% block content %}
+    <div class="inline">
+        <a href="{% url 'dashboard-manage-custom-items' %}"><i class="material-icons">chevron_left</i></a>
+        <h1>Add Custom Group</h1>
+    </div>
+    {% if form %}
+        <form action="{% url 'dashboard-add-group' %}" method="POST">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Add" class="button">
+            {% if error %}
+                <p>{{ error }}</p>
+            {% endif %}
+        </form>
+    {% endif %}
+{% endblock content %}

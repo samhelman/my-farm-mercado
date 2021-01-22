@@ -1,0 +1,291 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+*, *::after, *::before {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    background-color: whitesmoke;
+    color: #1b1C1D;
+}
+
+h1 {
+    padding: 1rem 0;
+}
+
+p {
+    padding: 0.25rem 0;
+}
+
+.title h1 {
+    font-size: 3rem;
+    padding-bottom: 0;
+}
+
+.title h4 {
+    color: orange;
+}
+
+nav {
+    background-color: #311b92;
+    padding: 0 10%;
+    width: 100vw;
+}
+
+nav > div {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+nav a {
+    display: flex;
+    border-bottom: solid 3px transparent;
+    transition: border .6s ease, color .6s ease;
+    font-size: 1.2rem;
+    text-decoration: none;
+    padding: 1rem;
+    color: #F0F3EB;
+}
+
+nav a:hover {
+    color: orange;
+    border-bottom: solid 3px orange;
+}
+
+nav .selected {
+    color: orange;
+    border-bottom: solid 3px orange;
+}
+
+.main-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.secondary-nav {
+    background-color: #1B1C1D;
+}
+
+.secondary-nav a {
+    font-size: 1rem;
+    padding: .5rem 1rem;
+}
+
+.nav-shadow {
+    box-shadow: 0 2px 10px 1px rgba(0,0,0,.6);
+}
+
+main {
+    margin: 2rem 25%;
+}
+
+.centered {
+    position: absolute;
+    text-align: center;
+    top: 40%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+form {
+    border: solid 2px #311b92;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    transition: border .6s ease;
+}
+
+form:hover {
+    border-color: orange;
+}
+
+form p {
+    display: block;
+}
+
+form input, form select, form textarea {
+    margin: .3rem 0;
+    padding: .3rem;
+}
+
+form textarea {
+    resize: none;
+    height: 5rem;
+}
+
+form label {
+    color: #311b92;
+}
+form ul {
+    padding: .5rem 0;
+}
+
+form li {
+    list-style-type: none;
+    display: inline-flex;
+    flex-wrap: wrap;
+}
+
+form li label {
+    color: #1B1C1D;
+    padding: .5rem;
+    border: solid 2px #1B1C1D;
+    transition: background-color .3s ease, color .3s ease, border .3s ease;
+    cursor: pointer;
+}
+
+form li label:hover {
+    color: orange;
+    border-color: orange;
+}
+
+form li input[type=checkbox] {
+    display: none;
+}
+
+form li input[type=checkbox]:checked + label {
+    color: white;
+    background-color: #311b92;
+    padding: .5rem;
+    border-color: #311b92;
+}
+
+.button {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #311b92;
+    border: solid 2px #311b92;
+    transition: color .6s ease, border .6s ease, background-color .6s ease;
+    text-decoration: none;
+    padding: .3rem;
+    display: inline-block;
+    text-align: center;
+}
+
+.button:hover {
+    cursor: pointer;
+    color: orange;
+    border-color: orange;
+}
+
+.primary-button {
+    color: white;
+    background-color: #311b92;
+}
+
+.primary-button:hover {
+    background-color: transparent;
+}
+
+.errors {
+    font-size: 0.8rem;
+    color: red;
+}
+
+table {
+    width: 100%;
+    border: solid 2px #311b92;
+    margin: .5rem 0;
+}
+
+th, td {
+    padding: .5rem;
+}
+
+th {
+    background-color: #311b9233;
+}
+
+td {
+    border-top: 1px solid #1B1C1D;
+}
+
+.table-80 {
+    width: 80%;
+}
+
+.table-20 {
+    width: 20%;
+    border-left: 1px solid #1B1C1D;
+    text-align: center;
+}
+
+.table-name {
+    background-color: #311b92;
+    padding: .25rem;
+    color: white;
+}
+
+.green {
+    color: seagreen;
+}
+
+.red {
+    color: red;
+}
+
+.inline {
+    display: flex;
+    align-items: center;
+}
+
+.inline a {
+    padding: 0 .5rem 0 0;
+}
+
+.inline i {
+    color:  #1B1C1D;
+    border-radius: 50%;
+    transition: color .6s ease, background-color .6s ease;
+}
+
+.inline i:hover {
+    color: orange;
+    background-color: #1B1C1D;
+}
+
+.muted {
+    font-size: .8rem;
+    color: #1B1C1D
+}
+
+.nonfield {
+    display: none;
+}
+
+.username {
+    color: white;
+    background-color: #1B1C1D;
+    display: inline-block;
+    padding: .25rem .5rem;
+    border-radius: 5px 5px 0 0;
+    position: fixed;
+    bottom: 0;
+    right: 5px;
+    font-size: 0.8rem;
+}
+
+@media only screen and (max-width: 500px) {
+
+    nav {
+        padding: 0;
+    }
+
+    nav > div {
+        flex-direction: column;
+    }
+
+    main {
+        margin: .5rem;
+    }
+
+}
