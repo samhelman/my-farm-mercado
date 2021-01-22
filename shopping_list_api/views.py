@@ -33,6 +33,8 @@ class LoginView(TemplateView):
         )
         if user is not None:
             login(request, user)
+            # TODO: Refactor this first login logic to it's own API view, so the app can use the same logic.
+            # TODO: Refactor this logic to make the first login check in the dashboard view.
             user_profile = UserProfile.objects.get(user=user)
             if user_profile.is_first_login and not user_profile.is_admin():
                 user_profile.is_first_login = False
