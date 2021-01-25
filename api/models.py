@@ -48,14 +48,14 @@ class ShoppingList(models.Model):
 
 class ShoppingListItem(models.Model):
     shopping_list = models.ForeignKey(ShoppingList, on_delete=models.CASCADE)
-    item_name = models.CharField(max_length=20)
+    item_name = models.CharField(max_length=100)
 
     def __str__(self):
         return f"{self.item_name} - {self.shopping_list}"
 
 class UserCustomListOption(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    item_name = models.CharField(max_length=20)
+    item_name = models.CharField(max_length=100)
 
     def __str__(self):
         return f"{self.item_name} - {self.user}"
@@ -69,7 +69,7 @@ class OrganisationCustomListGroup(models.Model):
 
 class OrganisationCustomListOption(models.Model):
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
-    item_name = models.CharField(max_length=20)
+    item_name = models.CharField(max_length=100)
     group = models.ForeignKey(OrganisationCustomListGroup, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
