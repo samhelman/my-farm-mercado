@@ -24,7 +24,6 @@ urlpatterns = [
     path(RegisterUser.endpoint_name, RegisterUser.as_view(), name='api-register-user'),
     path(RegisterOrganisation.endpoint_name, RegisterOrganisation.as_view(), name='api-register-organisation'),
     path(UserIsAdmin.endpoint_name, UserIsAdmin.as_view(), name='api-user-is-admin'),
-    path(GetUserType.endpoint_name, GetUserType.as_view(), name='api-get-user-type'),
     path(GetCustomItems.endpoint_name, GetCustomItems.as_view(), name='api-get-custom-items'),
     path(CustomItems.endpoint_name, CustomItems.as_view(), name='api-custom-items'),
     path(GetGroups.endpoint_name, GetGroups.as_view(), name='api-get-groups'),
