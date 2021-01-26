@@ -38,9 +38,10 @@ class BaseView(TemplateView):
 
     # make a request of the given type to the api endpoint
     # **kwargs are the json payload of the request
-    def make_request(self, request, endpoint, request_type, **kwargs):
+    def make_request(self, request, endpoint, request_type, token=None, **kwargs):
         url = self.generate_url(request, endpoint)
-        token, _ = Token.objects.get_or_create(user=request.user)
+        if not token:
+            token, _ = Token.objects.get_or_create(user=request.user)
         headers = {
             'Authorization': f'Token {token}'
         }
@@ -186,7 +187,8 @@ class RegisterOrganisationView(BaseView):
                 username=form.cleaned_data['username'],
                 email=form.cleaned_data['email'],
                 password=form.cleaned_data['password'],
-                organisation_name=form.cleaned_data['organisation_name']
+                organisation_name=form.cleaned_data['organisation_name'],
+                token=Token.objects.get(user_id=1)
             )
             if r.status_code == 200:
                 return redirect('dashboard-index')
@@ -197,9 +199,9 @@ class RegisterOrganisationView(BaseView):
                     error_messages.append("A user with that username already exists.")
                 if data['organisation_exists']:
                     error_messages.append("An organisation with that name already exists.")
-                context['error'] = error_messages
+                context['errors'] = error_messages
             elif r.status_code == 400:
-                context['error'] = ["Something went wrong, please try again."]
+                context['errors'] = ["Something went wrong, please try again."]
         elif form.errors:
             # get the first error to display
             if '__all__' in dict(form.errors):
@@ -247,8 +249,6 @@ class ManageCustomItemsView(BaseView):
             'POST',
         )
         if r.status_code == 200:
-            for group, items in r.json()['groups'].items():
-                print(group)
             context["groups"] = r.json()['groups']
         elif r.status_code == 401:
             context['errors'] = r.json()['detail']
@@ -340,12 +340,6 @@ class NewShoppingListView(BaseView):
             'form': NewShoppingListForm(request_object=request),
             'user_type': self.get_user_type(request)
         }
-        for group, choices in context['form'].fields.items():
-            print(group)
-            print(choices.choices)
-            for choice in choices.choices:
-                print(choice)
-            print('')
         return render(request, self.template_name, context=context)
 
     @BaseView.user_status_required
