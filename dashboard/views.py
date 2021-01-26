@@ -17,13 +17,18 @@ from django.contrib.auth.models import User
 from api.models import UserProfile
 from rest_framework.authtoken.models import Token
 
+"""
+    - Base template view class that defines some shared methods
+"""
 class BaseView(TemplateView):
 
+    # generate a url to make a request on the api endpoint
     def generate_url(self, request, endpoint):
         prefix = "http://" if settings.DEBUG else "https://"
         url = f"{prefix}{request.get_host()}{reverse(endpoint)}"
         return url
 
+    # get the user type of the user making the request
     def get_user_type(self, request):
         user_id = request.user.id
         user = User.objects.filter(id=user_id).first()
@@ -31,6 +36,8 @@ class BaseView(TemplateView):
         user_type = user_profile.user_type
         return user_type
 
+    # make a request of the given type to the api endpoint
+    # **kwargs are the json payload of the request
     def make_request(self, request, endpoint, request_type, **kwargs):
         url = self.generate_url(request, endpoint)
         token, _ = Token.objects.get_or_create(user=request.user)
@@ -42,6 +49,8 @@ class BaseView(TemplateView):
         else:
             return requests.get(url, headers=headers)
 
+    # a decorator function that makes a request to the api to determine if a user has admin status
+    # redirects non admin users to the dashboard home page
     def admin_status_required(func):
         def inner(*args):
             self = args[0]
@@ -59,11 +68,13 @@ class BaseView(TemplateView):
                 }
                 r = requests.post(url, headers=headers, json=json)
                 if r.status_code == 200 and r.json()['is_admin']:
-                    return func(args[0], request)
+                    return func(self, request)
                 else:
                     return redirect('dashboard-index')
         return inner
 
+    # a decorator function that makes a request to the api to determine if a user has 'user status
+    # redirects non 'user' users to the dashboard home page
     def user_status_required(func):
         def inner(*args):
             self = args[0]
@@ -81,7 +92,7 @@ class BaseView(TemplateView):
                 }
                 r = requests.post(url, headers=headers, json=json)
                 if r.status_code == 200 and r.json()['is_admin'] == False:
-                    return func(args[0], request)
+                    return func(self, request)
                 else:
                     return redirect('dashboard-index')
         return inner
