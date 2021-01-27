@@ -17,13 +17,21 @@
         {% for group, items in groups.items %}
             <table CELLSPACING=0>
                 <tr>
-                    <th>
+                    <th class="table-80">
                         {{ group.capitalize }}
+                    </th>
+                    <th class="table-20">
+                        Approximate Price
                     </th>
                 </tr>
                 {% for item in items %}
                     <tr> 
-                        <td>{{ item.item_name.capitalize }}</td> 
+                        <td class="table-80"><a href="{% url 'dashboard-edit-custom-item' item_id=item.item_id %}">{{ item.item_name.capitalize }}</a></td>
+                        {% if item.price %}
+                            <td class="table-20">${{ item.price }}</td>
+                        {% else %}
+                            <td class="table-20">n/a</td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </table>

@@ -56,6 +56,7 @@ class ShoppingListItem(models.Model):
 class UserCustomListOption(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     item_name = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=6, decimal_places=2, null=True)
 
     def __str__(self):
         return f"{self.item_name} - {self.user}"
@@ -71,6 +72,7 @@ class OrganisationCustomListOption(models.Model):
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
     item_name = models.CharField(max_length=100)
     group = models.ForeignKey(OrganisationCustomListGroup, on_delete=models.CASCADE, null=True)
+    price = models.DecimalField(max_digits=6, decimal_places=2, null=True)
 
     def __str__(self):
         return f"{self.item_name} - {self.organisation}"

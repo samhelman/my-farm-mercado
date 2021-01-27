@@ -322,7 +322,9 @@ class GetCustomItems(APIView):
                     items = OrganisationCustomListOption.objects.filter(organisation=organisation, group=group)
                     for item in items:
                         data = {
-                            'item_name': item.item_name
+                            'item_id': item.id,
+                            'item_name': item.item_name,
+                            'price': item.price
                         }
                         group_data.append(data)
                     # add the group and child items to return data
@@ -333,7 +335,9 @@ class GetCustomItems(APIView):
                 group_data = []
                 for item in items:
                     data = {
-                        'item_name': item.item_name
+                        'item_id': item.id,
+                        'item_name': item.item_name,
+                        'price': item.price
                     }
                     group_data.append(data)
                 return_data['Custom Items'] = group_data
@@ -363,8 +367,10 @@ class CustomItems(APIView):
 
     def post(self, request):
         try:
-            # get item name from request data and convert to lower case
+            # get item name and price from request data and convert to lower case
+            item_id = request.data['item_id']
             item_name = request.data['item_name'].lower()
+            price = request.data['price']
 
             # get user profile information using auth token
             user = User.objects.filter(auth_token=request.auth).first()
@@ -373,26 +379,48 @@ class CustomItems(APIView):
             organisation = user_profile.organisation
             
             if user_type == 'admin':
-                # check all organisation custom items for existing item with the same item name
-                is_duplicate = len(OrganisationCustomListOption.objects.filter(item_name=item_name, organisation=organisation)) > 0
-
                 group_name = request.data['group_name'].lower()
                 group = OrganisationCustomListGroup.objects.filter(group_name=group_name, organisation=organisation).first()
-                # create organisation custom item
-                item = OrganisationCustomListOption(item_name=item_name, organisation=organisation, group=group)
-            elif user_type == 'user':
-                # check all user custom items for existing item with the same item name
-                is_duplicate = len(UserCustomListOption.objects.filter(item_name=item_name, user=user)) > 0
+                if item_id:
+                    # updating so is not a duplicate creation
+                    is_duplicate = False
 
-                # create user custom item
-                item = UserCustomListOption(item_name=item_name, user=user)
+                    # update an existing item
+                    existing_item = OrganisationCustomListOption.objects.get(id=item_id)
+                    existing_item.item_name = item_name
+                    existing_item.price = price
+                    existing_item.group = group
+                    existing_item.save()
+                else:
+                    # check all organisation custom items for existing item with the same item name
+                    is_duplicate = len(OrganisationCustomListOption.objects.filter(item_name=item_name, organisation=organisation)) > 0
+
+                    # create organisation custom item
+                    item = OrganisationCustomListOption(item_name=item_name, organisation=organisation, group=group, price=price)
+                    item.save()
+            elif user_type == 'user':
+                if item_id:
+                    # updating so is not a duplicate creation
+                    is_duplicate = False
+
+                    # update an existing item
+                    existing_item = UserCustomListOption.objects.get(id=item_id)
+                    existing_item.item_name = item_name
+                    existing_item.price = price
+                    existing_item.save()
+                else:
+                    # check all user custom items for existing item with the same item name
+                    is_duplicate = len(UserCustomListOption.objects.filter(item_name=item_name, user=user)) > 0
+
+                    # create user custom item
+                    item = UserCustomListOption(item_name=item_name, user=user, price=price)
+                    item.save()
             if is_duplicate:
                 content = {
                     "success": False,
                     "errors": "An item with this name already exists."
                 }
                 return Response(content, status=status.HTTP_409_CONFLICT)
-            item.save()
             content = {
                 "item_name": item_name
             }
@@ -519,12 +547,12 @@ class GetShoppingListItems(APIView):
             for group in organisation_groups:
                 # get all the custom items for each group and add them to the response content
                 query = OrganisationCustomListOption.objects.filter(group=group)
-                group_custom_items = [{'item_name': item.item_name} for item in query]
+                group_custom_items = [{'item_name': item.item_name, 'price': item.price} for item in query]
                 content[group.group_name] = group_custom_items
             
             # get all request user's custom items and add to response content
             user_custom_items_query = UserCustomListOption.objects.filter(user=user)
-            user_custom_items = [{'item_name': item.item_name} for item in user_custom_items_query]
+            user_custom_items = [{'item_name': item.item_name, 'price': item.price} for item in user_custom_items_query]
             content['user custom items'] = user_custom_items
 
             return JsonResponse(content)
@@ -999,6 +1027,63 @@ class RegisterPayment(APIView):
                 content = {
                     'detail': "You are not authorised to view this page."
                 }
+                return Response(content, status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            log_api_error(
+                error=str(e),
+                endpoint=self.endpoint_name,
+            )
+            
+            content = {
+                'error': str(e),
+                'detail': "Something went wrong processing your request."
+            }
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+class GetCustomItem(APIView):
+    endpoint_name = 'get-item/'
+
+    def post(self, request):
+        try:
+            # get the item id from the request data
+            item_id = request.data['item_id']
+
+            # get the request user's profile info using auth token
+            user = User.objects.get(auth_token=request.auth)
+            user_profile = UserProfile.objects.filter(user=user).first()
+            user_organisation = user_profile.organisation
+            user_type = user_profile.user_type
+
+            authorised = False # default to false
+            if user_type == 'admin':
+                # get the item by item id
+                item = OrganisationCustomListOption.objects.get(id=item_id)
+
+                # verify that the item belongs to the user's organisation
+                if item.organisation == user_organisation:
+                    authorised = True
+            else:
+                # get the item by item id
+                item = UserCustomListOption.objects.get(id=item_id)
+
+                # verify that the item belongs to the user
+                if item.user == user:
+                    authorised = True
+            
+            if authorised:
+                response = {
+                    'item': {
+                        'id': item.id,
+                        'item_name': item.item_name,
+                        'group': OrganisationCustomListGroup.objects.get(id=item.group.id).group_name,
+                        'price': item.price
+                    }
+                }
+                return JsonResponse(response)
+            else:
+                content = {
+                        'detail': "You are not authorised to view this page."
+                    }
                 return Response(content, status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             log_api_error(

@@ -62,6 +62,7 @@ class AddGroupForm(forms.Form):
 
 class AddCustomItemForm(forms.Form):
     item_name = forms.CharField(label="Item Name", max_length=50)
+    price = forms.DecimalField(required=False, label="Approximate Price:", max_digits=6, decimal_places=2, widget=forms.NumberInput(attrs={'placeholder': "Optional"}))
 
     def __init__(self, *args, **kwargs):
         request_object = kwargs.pop("request_object")
@@ -87,9 +88,16 @@ class AddCustomItemForm(forms.Form):
                 groups = r.json()['groups']
                 for group in groups:
                     group_tuples.append((group, group.capitalize()))
+                group_tuples.insert(0, ("",""))
                 return group_tuples
             else:
                 return False
+
+    def set_initial_values(self, item_name=None, price=None, group=None):
+        self.fields['item_name'].initial = item_name.capitalize()
+        self.fields['price'].initial = price
+        self.fields['group'].initial = group
+
 
 class NewShoppingListForm(forms.Form):
 
@@ -99,7 +107,18 @@ class NewShoppingListForm(forms.Form):
         groups = self.get_groups(request_object)
         for group, items in groups.items():
             if len(items):
-                choices = [(item['item_name'], item['item_name'].capitalize()) for item in items]
+                choices = []
+                for item in items:
+                    item_name = item['item_name']
+                    price = item['price']
+                    if price:
+                        choices.append(
+                            (item_name, f"{item_name.capitalize()} ~${price}")
+                        )
+                    else:
+                        choices.append(
+                            (item_name, item_name.capitalize())
+                        )
                 self.fields[group] = forms.ChoiceField(label=group.upper(), widget=forms.CheckboxSelectMultiple, choices=choices)
         if len(args) > 0:
             post_data = dict(args[0])

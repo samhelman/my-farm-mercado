@@ -259,16 +259,43 @@ class ManageCustomItemsView(BaseView):
 class AddCustomItemView(BaseView):
     template_name = 'dashboard/add-custom-item.html'
 
-    def get(self, request):
+    def get(self, request, item_id=None):
+        form = AddCustomItemForm(request_object=request)
         context = {
             'main_selected': 'dashboard',
             'minor_selected': 'custom_items',
             'user_type': self.get_user_type(request),
-            'form': AddCustomItemForm(request_object=request)
+            'type': 'add' if item_id is None else 'edit',
+            'form': form
         }
+        if item_id is not None:
+            r = self.make_request(
+                request,
+                'api-get-item',
+                'POST',
+                item_id=item_id
+            )
+            if r.status_code == 200:
+                item = r.json()['item']
+                context['item'] = item
+                item_name = item['item_name']
+                price = item['price']
+                group = None
+                if 'group' in item:
+                    group = item['group']
+                form.set_initial_values(
+                    item_name=item_name,
+                    price=price,
+                    group=group
+                )
+                context['form'] = form
+            elif r.status_code == 401:
+                context['error'] = r.json()['detail']
+            elif r.status_code == 409:
+                context['error'] = r.json()['errors']
         return render(request, self.template_name, context=context)
 
-    def post(self, request):
+    def post(self, request, item_id=None):
         form = AddCustomItemForm(request.POST, request_object=request)
         context = {
             'main_selected': 'dashboard',
@@ -281,8 +308,10 @@ class AddCustomItemView(BaseView):
                 request,
                 'api-custom-items',
                 'POST',
+                item_id=item_id,
                 item_name=form.data['item_name'],
-                group_name=form.data['group'] if 'group' in form.data else None
+                group_name=form.data['group'] if 'group' in form.data else None,
+                price=form.data['price'] if 'price' in form.data else None,
             )
             if r.status_code == 200:
                 return redirect('dashboard-manage-custom-items')

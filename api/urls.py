@@ -15,7 +15,8 @@ from .views import (
     UpdateList,
     GenerateList,
     UserDetail,
-    RegisterPayment
+    RegisterPayment,
+    GetCustomItem
 )
 
 urlpatterns = [
@@ -34,5 +35,6 @@ urlpatterns = [
     path(UpdateList.endpoint_name, UpdateList.as_view(), name='api-update-list'),
     path(GenerateList.endpoint_name, GenerateList.as_view(), name='api-generate-list'),
     path(UserDetail.endpoint_name, UserDetail.as_view(), name='api-user-detail'),
-    path(RegisterPayment.endpoint_name, RegisterPayment.as_view(), name='api-register-payment')
+    path(RegisterPayment.endpoint_name, RegisterPayment.as_view(), name='api-register-payment'),
+    path(GetCustomItem.endpoint_name, GetCustomItem.as_view(), name='api-get-item')
 ]

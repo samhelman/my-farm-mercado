@@ -7,16 +7,25 @@
 {% block content %}
     <div class="inline">
         <a href="{% url 'dashboard-manage-custom-items' %}"><i class="material-icons">chevron_left</i></a>
-        <h1>Add Custom Item</h1>
+        <h1>{{ type.capitalize }} Custom Item</h1>
     </div>
     {% if form %}
-        <form action="{% url 'dashboard-add-custom-item' %}" method="POST">
+    {% if type == 'add' %}
+        <form action="{% url 'dashboard-add-custom-item' %}" method="POST"></form>
+    {% else %}
+        <form action="{% url 'dashboard-edit-custom-item' item_id=item.id %}" method="POST">
+    {% endif %}
             {% csrf_token %}
             {{ form }}
-            <input type="submit" value="Add" class="button">
+            {% if type == 'add' %}
+                <input type="submit" value="Add" class="button">
+            {% elif type == 'edit' %}
+                <input type="submit" value="Update" class="button">
+            {% endif %}
             {% if error %}
-                <p>{{ error }}</p>
+                <p class="errors">{{ error }}</p>
             {% endif %}
         </form>
     {% endif %}
+    <p>id:{{item.id}}</p>
 {% endblock content %}
