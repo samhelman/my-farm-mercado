@@ -96,7 +96,8 @@ class AddCustomItemForm(forms.Form):
     def set_initial_values(self, item_name=None, price=None, group=None):
         self.fields['item_name'].initial = item_name.capitalize()
         self.fields['price'].initial = price
-        self.fields['group'].initial = group
+        if 'group' in self.fields:
+            self.fields['group'].initial = group
 
 
 class NewShoppingListForm(forms.Form):

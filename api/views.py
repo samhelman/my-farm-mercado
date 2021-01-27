@@ -366,7 +366,7 @@ class CustomItems(APIView):
     endpoint_name = "custom-items/"
 
     def post(self, request):
-        try:
+        # try:
             # get item name and price from request data and convert to lower case
             item_id = request.data['item_id']
             item_name = request.data['item_name'].lower()
@@ -387,16 +387,22 @@ class CustomItems(APIView):
 
                     # update an existing item
                     existing_item = OrganisationCustomListOption.objects.get(id=item_id)
-                    existing_item.item_name = item_name
-                    existing_item.price = price
-                    existing_item.group = group
+                    if item_name:
+                        existing_item.item_name = item_name
+                    if price:
+                        existing_item.price = price
+                    if group:
+                        existing_item.group = group
+                    
                     existing_item.save()
                 else:
                     # check all organisation custom items for existing item with the same item name
                     is_duplicate = len(OrganisationCustomListOption.objects.filter(item_name=item_name, organisation=organisation)) > 0
 
                     # create organisation custom item
-                    item = OrganisationCustomListOption(item_name=item_name, organisation=organisation, group=group, price=price)
+                    item = OrganisationCustomListOption(item_name=item_name, organisation=organisation, group=group)
+                    if price:
+                        item.price = Decimal(price)
                     item.save()
             elif user_type == 'user':
                 if item_id:
@@ -405,15 +411,19 @@ class CustomItems(APIView):
 
                     # update an existing item
                     existing_item = UserCustomListOption.objects.get(id=item_id)
-                    existing_item.item_name = item_name
-                    existing_item.price = price
+                    if item_name:
+                        existing_item.item_name = item_name
+                    if price:
+                        existing_item.price = price
                     existing_item.save()
                 else:
                     # check all user custom items for existing item with the same item name
                     is_duplicate = len(UserCustomListOption.objects.filter(item_name=item_name, user=user)) > 0
 
                     # create user custom item
-                    item = UserCustomListOption(item_name=item_name, user=user, price=price)
+                    item = UserCustomListOption(item_name=item_name, user=user)
+                    if price:
+                        item.price = Decimal(price)
                     item.save()
             if is_duplicate:
                 content = {
@@ -426,17 +436,17 @@ class CustomItems(APIView):
             }
             return JsonResponse(content)
 
-        except Exception as e:
-            log_api_error(
-                error=str(e),
-                endpoint=self.endpoint_name,
-            )
+        # except Exception as e:
+        #     log_api_error(
+        #         error=str(e),
+        #         endpoint=self.endpoint_name,
+        #     )
             
-            content = {
-                'error': str(e),
-                'detail': "Something went wrong processing your request."
-            }
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        #     content = {
+        #         'error': str(e),
+        #         'detail': "Something went wrong processing your request."
+        #     }
+        #     return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
 """
     - Add a new custom group to the organisation's custom items
@@ -1075,10 +1085,11 @@ class GetCustomItem(APIView):
                     'item': {
                         'id': item.id,
                         'item_name': item.item_name,
-                        'group': OrganisationCustomListGroup.objects.get(id=item.group.id).group_name,
                         'price': item.price
                     }
                 }
+                if user_type == 'admin':
+                    response['group'] = OrganisationCustomListGroup.objects.get(id=item.group.id).group_name,
                 return JsonResponse(response)
             else:
                 content = {
