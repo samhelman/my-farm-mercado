@@ -11,7 +11,7 @@
     </div>
     {% if form %}
     {% if type == 'add' %}
-        <form action="{% url 'dashboard-add-custom-item' %}" method="POST"></form>
+        <form action="{% url 'dashboard-add-custom-item' %}" method="POST">
     {% else %}
         <form action="{% url 'dashboard-edit-custom-item' item_id=item.id %}" method="POST">
     {% endif %}
