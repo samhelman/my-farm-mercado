@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY') or 'afl$%t-%@#w!x=*rgwi@uw9i5cfn9n08w9p=p0vm0z*--7m(al'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG_VALUE') or True
+DEBUG = os.environ.get('DEBUG_VALUE') if os.environ.get('DEBUG_VALUE') else True
 
 ALLOWED_HOSTS = [
     "myfarmmercado.herokuapp.com/",
