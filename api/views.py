@@ -1089,7 +1089,7 @@ class GetCustomItem(APIView):
                     }
                 }
                 if user_type == 'admin':
-                    response['group'] = OrganisationCustomListGroup.objects.get(id=item.group.id).group_name,
+                    response['item']['group'] = OrganisationCustomListGroup.objects.get(id=item.group.id).group_name,
                 return JsonResponse(response)
             else:
                 content = {
