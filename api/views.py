@@ -176,8 +176,8 @@ class RegisterOrganisation(APIView):
             ],
             'Grains': [
                 'White Rice',
-                'Brown Rice'
-                'Pasta'
+                'Brown Rice',
+                'Pasta',
                 'Whole Wheat Pasta'
             ],
             'Meat': [
